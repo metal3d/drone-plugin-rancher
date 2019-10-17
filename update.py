@@ -4,8 +4,6 @@ import os
 import requests
 
 
-
-
 class RancherAPI:  # pylint: disable=too-few-public-methods
     """ Make calls to Rancher API """
 
@@ -20,7 +18,7 @@ class RancherAPI:  # pylint: disable=too-few-public-methods
         self.token = token
         self.headers = {
             'Authorization': "Bearer %s" % token,
-            'Accept' : 'application/json',
+            'Accept': 'application/json',
         }
         self.verify = check_ssl
 
@@ -123,7 +121,7 @@ def __main():
 
     api_url = os.environ.get('DRONE_PLUGIN_API')
     chek_ssl = os.environ.get('DRONE_PLUGIN_VERIFY', 'true') != 'false'
-    project_name = os.environ.get('DRONE_PLUGIN_PROJECT')
+    project_name = os.environ.get('DRONE_PLUGIN_PROJECT', 'Default')
     app_name = os.environ.get('DRONE_PLUGIN_APP')
     cluster_name = os.environ.get('DRONE_PLUGIN_CLUSTER')
     token = os.environ.get('DRONE_PLUGIN_TOKEN', None)
@@ -141,10 +139,9 @@ def __main():
     answers = dict(zip(answer_keys, answer_values))
     app.merge_answers(answers)
     print(app.answers)
-    # answers = dict(zip(KEYS, VALUES))
-    # app.answers.update(answers)
-    # print("Changing answers to", app.answers)
-    # app.update()
+    print("Changing answers to", app.answers)
+    app.update()
+
 
 if __name__ == '__main__':
     __main()
