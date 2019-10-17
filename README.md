@@ -49,6 +49,7 @@ Changing a key in answers should be applied by Rancher to corresponding resource
 The managed settings are:
 
 - `api` that should be the Rancher API URL, the plugin is currently only compatible with tester v3 version
+- `verify` (optional, default is "true") check API certificate
 - `cluster` is the cluster name
 - `project` (optional, default to "Default") is the project name where the application you want to manage resides
 - `app` is the name of the application you want to update
