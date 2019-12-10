@@ -4,7 +4,7 @@ Drone.io allows to run tests, build images and push them in a registry. To deplo
 
 With Rancher, that can be a bit problematic as the given "answers" for an application is not set. So, using interface to update something can potentially reset some values in a Deployment.
 
-"drone-plugin-rancher" is made to hit Rancher API to change the answer as if you did it on Rancher UI. You don't need to use "drone-kubernetes" plugin.
+"plugin-rancher" is made to hit Rancher API to change the answer as if you did it on Rancher UI. You don't need to use "drone-kubernetes" plugin.
 
 **Important** this plugin only manages "answers" and not "YAML" configuration.
 
@@ -27,7 +27,7 @@ steps:
       - latest
       - ${DRONE_COMMIT_SHA}
 - name: deploy
-  image: metal3d/drone-plugin-rancher:v1
+  image: metal3d/plugin-rancher:v1
   settings:
     api: https://rancher.url/v3
     project: Default
