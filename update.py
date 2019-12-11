@@ -47,17 +47,20 @@ class App:
 
     def __init__(self):
         self.ressource_id = ""
+        self.data = {}
         self.name = ""
         self.answers = {}
         self.links = {}
+        self.revisionId = ''
         self.api: RancherAPI
 
     def update(self):
         """ Update the application with new answers """
+        self.data['answers'] = self.answers
         res = self.api(
             self.links.get('update'),
             method='put',
-            data={'answers': self.answers}
+            data=self.data,
         )
         return res
 
@@ -79,9 +82,12 @@ class Project:  # pylint: disable=too-few-public-methods
         res = self.api(self.links.get('apps') + '?name=%s' % name)
         data = res.json().get('data')[0]
         app = App()
+        app.data = data
+        app.api = self.api
         app.ressource_id = data.get('id')
         app.name = data.get('name')
         app.answers = data.get('answers')
+        app.revisionId = data.get('appRevisionId')
         app.links = data.get('links')
         return app
 
@@ -99,6 +105,7 @@ class Rancher:  # pylint: disable=too-few-public-methods
 
     def _init_links(self):
         cluster_url = self.api().json().get('links').get('clusters')
+        print(cluster_url)
         res = self.api.call(cluster_url + '?name=' + self.name)
         data = res.json().get('data')[0]
         self.links = data.get('links')
@@ -119,14 +126,14 @@ class Rancher:  # pylint: disable=too-few-public-methods
 
 def __main():
 
-    api_url = os.environ.get('DRONE_PLUGIN_API')
-    chek_ssl = os.environ.get('DRONE_PLUGIN_VERIFY', 'true') != 'false'
-    project_name = os.environ.get('DRONE_PLUGIN_PROJECT', 'Default')
-    app_name = os.environ.get('DRONE_PLUGIN_APP')
-    cluster_name = os.environ.get('DRONE_PLUGIN_CLUSTER')
-    token = os.environ.get('DRONE_PLUGIN_TOKEN', None)
-    answer_keys = os.environ.get('DRONE_PLUGIN_KEYS', None).split(',')
-    answer_values = os.environ.get('DRONE_PLUGIN_VALUES', None).split(',')
+    api_url = os.environ.get('PLUGIN_API')
+    chek_ssl = os.environ.get('PLUGIN_VERIFY', 'true') != 'false'
+    project_name = os.environ.get('PLUGIN_PROJECT', 'Default')
+    app_name = os.environ.get('PLUGIN_APP')
+    cluster_name = os.environ.get('PLUGIN_CLUSTER')
+    token = os.environ.get('PLUGIN_TOKEN', None)
+    answer_keys = os.environ.get('PLUGIN_KEYS', None).split(',')
+    answer_values = os.environ.get('PLUGIN_VALUES', None).split(',')
 
     rancher = Rancher(
         cluster=cluster_name,
@@ -140,7 +147,8 @@ def __main():
     app.merge_answers(answers)
     print(app.answers)
     print("Changing answers to", app.answers)
-    app.update()
+    res = app.update()
+    print(res.json())
 
 
 if __name__ == '__main__':
