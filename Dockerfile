@@ -6,4 +6,4 @@ RUN set -xe ;\
 
 ADD update.py /update.py
 USER 1001
-CMD ["/bin/sh", "update.py"]
+CMD ["/bin/sh", "/update.py"]
